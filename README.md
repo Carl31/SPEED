@@ -84,6 +84,7 @@ Major frameworks/libraries that we used to bootstrap our project:
 * TailwindCss
 * TypeScript
 * Nest.js
+* Mongoose
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
