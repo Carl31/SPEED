@@ -119,7 +119,7 @@ Major frameworks/libraries that we used to bootstrap our project:
 
 
 <!-- WORKFLOWS -->
-## Usage
+## Workflows
 
 - The workflows via Github Actions allow for CI/CD to Vercel. Try:
 
