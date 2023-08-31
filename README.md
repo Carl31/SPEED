@@ -56,6 +56,7 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#usage">Workflows</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -103,6 +104,7 @@ Major frameworks/libraries that we used to bootstrap our project:
   ```sh
   npm install npm@latest -g
   ```
+* Have .env file within /speed_backend containing username and password for MongoDB.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -112,6 +114,19 @@ Major frameworks/libraries that we used to bootstrap our project:
 ## Usage
 
 - Insert examples of how to use SPEED.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!-- WORKFLOWS -->
+## Usage
+
+- The workflows via Github Actions allow for CI/CD to Vercel. Try:
+
+--- Create a new pull request to the GitHub repository - GitHub Actions will recognize the change and use the Vercel CLI to build your application
+--- The Action uploads the build output to Vercel and creates a Preview Deployment
+--- When the pull request is merged, a Production build is created and deployed
+--- Every pull request will now automatically have a Preview Deployment attached. If the pull request needs to be rolled back, you can revert and merge the PR and Vercel will start a new Production build back to the old git state.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
