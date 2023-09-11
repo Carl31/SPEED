@@ -1,9 +1,14 @@
 "use client";
-import { FormEvent } from "react";
 
-export default function logInForm() {
+
+import { FormEvent, useState } from "react";
+
+export default function SignUpForm() {
+  const [loading, setLoading] = useState(false);
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    setLoading(true);
 
     const formData = new FormData(event.currentTarget);
 
@@ -16,10 +21,35 @@ export default function logInForm() {
     };
 
     console.log("Creds:" + JSON.stringify(credentials));
+
+    // send data to back-end
+    const response = await fetch("/api/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+
+    if (response.ok) {
+      console.log("Sign up successful");
+      setLoading(false);
+
+      // reset form
+      formData.set("firstName", "");
+      formData.set("lastName", "");
+      formData.set("email", "");
+      formData.set("username", "");
+      formData.set("password", "");
+
+    } else {
+      console.log("Error signing up:" + response.json);
+      setLoading(false);
+    }
   }
 
   return (
-    <section id="loginForm">
+    <section id="SignUpForm">
       <div className="grid grid-cols-6 gap-4 my-36">
         <div className="col-start-2 col-span-4">
           <div className="bg-blue-600 rounded-lg">
@@ -127,8 +157,9 @@ export default function logInForm() {
 
               <div className="flex items-center justify-between">
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-400 disabled:text-slate-700"
                   type="submit"
+                  disabled={loading}
                 >
                   Sign Up
                 </button>
