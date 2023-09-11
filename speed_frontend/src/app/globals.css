@@ -25,3 +25,13 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+@layer components {
+  .blueGradient {
+    background: linear-gradient(rgb(79, 79, 253), rgb(22, 22, 37));
+  }
+
+  .rounded-pill {
+    border-radius: 48px;
+  }
+}
