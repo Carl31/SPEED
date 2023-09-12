@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { signIn } from "next-auth/react";
 
 export default function LogInForm() {
   const [loading, setLoading] = useState(false);
@@ -18,26 +19,23 @@ export default function LogInForm() {
 
     console.log("Creds:" + JSON.stringify(credentials));
 
-    // send data to back-end
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
 
-    if (response.ok) {
-      console.log("Log in successful");
-      setLoading(false);
-      
+    try {
+      const callbackUrl = '/';
+      const res = await signIn("credentials", {
+        redirect: true,
+        username: credentials.username,
+        password: credentials.password,
+        callbackUrl,
+      });
+    } catch {
       // reset form
       formData.set("username", "");
       formData.set("password", "");
-    } else {
       console.log("Error signing up:" + response.json);
       setLoading(false);
     }
+    
   }
 
   return (
