@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,19 +13,26 @@ interface LogInFormProps {
 
 export default function LogInForm({ params }: LogInFormProps) {
 
-
-  if (params['signUp'] === 'true') {
-    showNotification("Welcome new user!", true);
-    showNotification("Please log in.", false);
-  }
-
-
   const [loading, setLoading] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false); // State to track form submission
+
+
+  useEffect(() => {
+    if (params['signUp'] === 'true' && !formSubmitted) {
+      showNotification("Welcome new user!", true);
+      showNotification("Please log in.", false);
+    }
+  }, [params]);
+
+
+  
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setLoading(true);
+    setFormSubmitted(true); // Mark the form as submitted
+
 
     const formData = new FormData(event.currentTarget);
 

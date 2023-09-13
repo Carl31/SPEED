@@ -32,11 +32,9 @@ function getUrlParams(url: string | null): Record<string, string> {
 export default function Home() {
  // Get the current URL
  const searchParams =  useSearchParams()
-
  // Display the key/value pairs
  const url = searchParams.get('callbackUrl');
-
-  const params = getUrlParams(url);
+ const params = getUrlParams(url);
   //console.log(params); // Output: { signUp: 'true' }
 
   

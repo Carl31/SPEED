@@ -1,4 +1,7 @@
+'use client';
+
 import { UserSVG, MailSVG } from "../components/svgs";
+import { signOut, useSession } from "next-auth/react";
 
 type User =
   | {
@@ -25,7 +28,7 @@ export default function Dash({ user }: Props) {
       </p>
 
       <div className="flex justify-end">
-        <button className="m-5">
+        <button className="m-5" onClick={ () => signOut() }>
           <UserSVG />
           {/* <p>{user?.firstName}</p> */}
         </button>
