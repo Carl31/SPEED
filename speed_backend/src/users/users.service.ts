@@ -5,75 +5,104 @@ import {
 } from '@nestjs/common';
 import { User } from './user.model';
 import { InvalidInputException } from '../utils/InvalidInputError';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = []; // init empty user array - is private so only this file can interact with object
+  constructor(@InjectModel('User') private readonly userModel: Model<User>) {} // injected mongoose User Model
 
-  getUsers() {
-    const usersCopy = Object.assign({}, this.users); // to ensure that the returned object array is NOT editable
-    return usersCopy;
+  async getUsers() {
+    const users = await this.userModel.find().exec(); // exec returns a promise
+    return users.map((user) => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username,
+      password: user.password,
+    }));
   }
 
-  getUser(username: string) {
-    const user = this.findUser(username);
-    const userCopy = Object.assign({}, user);
-    return userCopy;
+  async getUser(username: string) {
+    const user = await this.findUser(username);
+    if (!user) {
+      return null;
+    }
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username,
+      password: user.password,
+    };
   }
 
-  insertUser(
+  async insertUser(
     firstName: string,
     lastName: string,
     email: string,
     username: string,
     password: string,
   ) {
-    const newUser = new User(
-      firstName,
-      lastName,
-      email,
-      username,
-      password,
-      'user',
-    );
-    this.users.push(newUser);
-    const userCopy = Object.assign({}, newUser);
-    return userCopy;
+    const newUser = new this.userModel({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      username: username,
+      password: password,
+      role: 'user',
+    });
+    const result = await newUser.save(); // adds to Mongodb
+    return result.id as string; // returns generated id that Mongo makes.
   }
 
-  updateRole(username: string, newRole: string) {
-    const user = this.findUser(username);
-    if (user.role.localeCompare(newRole) != 0) {
-      if (
-        newRole === 'administrator' ||
-        newRole === 'analyst' ||
-        newRole === 'user'
-      ) {
-        user.role = newRole;
-      } else {
-        throw new InvalidInputException(
-          "Role can only be 'user'/'administrator'/'analyst'.",
-        );
+  async updateRole(username: string, newRole: string) {
+    let updatedUser;
+    try {
+      updatedUser = await this.findUser(username);
+
+      if (updatedUser.role !== newRole) {
+        if (
+          newRole === 'administrator' ||
+          newRole === 'analyst' ||
+          newRole === 'user'
+        ) {
+          updatedUser.role = newRole;
+        } else {
+          throw new InvalidInputException(
+            "Role can only be 'user'/'administrator'/'analyst'.",
+          );
+        }
       }
+      await updatedUser.save();
+      return newRole;
+    } catch (error) {
+      throw new NotFoundException('Could not find user: ' + username);
     }
-    return newRole;
   }
 
-  private findUser(username: string) {
-    const user = this.users.find((user) => user.username === username);
-    if (!user) {
-      throw new NotFoundException("That username doesn't exist.");
+  private async findUser(username: string) {
+    let user;
+    try {
+      user = await this.userModel.findOne({ username: username }).exec();
+      //console.log(user);
+    } catch (error) {
+      throw new NotFoundException('Could not find user: ' + username);
     }
+
+    if (!user) {
+      throw new NotFoundException('Could not find user: ' + username);
+    }
+
     return user;
   }
 
-  deleteUser(username: string, password: string) {
-    const user = this.users.find((user) => user.username === username);
+  async deleteUser(username: string, password: string) {
+    const user = await this.findUser(username);
     if (user.password === password) {
-      const updatedUsers = this.users.filter((user) => {
-        return user.username != username;
-      });
-      this.users = updatedUsers;
+      await this.userModel.deleteOne({ username: username }).exec();
     } else {
       throw new UnauthorizedException('Delete aborted: invalid password.');
     }

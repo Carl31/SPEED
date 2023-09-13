@@ -47,17 +47,6 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        // get data from db
-
-        // const user = await mongoose.user.findUnique({
-        //   where: {
-        //     // where username is username
-        //   },
-        // });
-
-        // if (!user || !(await compare(credentials.password, user.password))) {
-        //   return null;
-        // }
         const users: User[] = [];
         try {
           const response = await fetch("http://localhost:4000/users", {
@@ -72,7 +61,7 @@ export const authOptions: NextAuthOptions = {
               const dataArray = Object.values(dataObject);
 
               for (const user of dataArray) {
-                users.push(user);
+                users.push(user as User);
               }
             })
             .catch((error) => {
@@ -83,6 +72,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error();
           }
           const userToCheck: User = {
+            id: "unkown",
             username: credentials.username,
             password: credentials.password,
           };
@@ -101,6 +91,7 @@ export const authOptions: NextAuthOptions = {
         } catch (error) {
           // Handle any errors that occurred during the fetch
           console.error("Fetch error:", error);
+          return null;
         }
       },
     }),

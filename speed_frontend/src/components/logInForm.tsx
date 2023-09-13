@@ -2,9 +2,26 @@
 
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { showNotification } from './notification';
 
-export default function LogInForm() {
+
+interface LogInFormProps {
+  params: Record<string, string>;
+}
+
+export default function LogInForm({ params }: LogInFormProps) {
+
+
+  if (params['signUp'] === 'true') {
+    showNotification("Welcome new user!", true);
+    showNotification("Please log in.", false);
+  }
+
+
   const [loading, setLoading] = useState(false);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -21,7 +38,7 @@ export default function LogInForm() {
 
 
     try {
-      const callbackUrl = '/';
+      const callbackUrl = '/dashboard';
       const res = await signIn("credentials", {
         redirect: true,
         username: credentials.username,
@@ -32,7 +49,7 @@ export default function LogInForm() {
       // reset form
       formData.set("username", "");
       formData.set("password", "");
-      console.log("Error signing up:" + response.json);
+      console.log("Error signing up.");
       setLoading(false);
     }
     

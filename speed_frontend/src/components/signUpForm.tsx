@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 
 export default function SignUpForm() {
   const [loading, setLoading] = useState(false);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -55,7 +56,7 @@ export default function SignUpForm() {
         // create user in db
 
         // redirect to login page
-        signIn(undefined, { callbackUrl: "/" });
+        signIn(undefined, { callbackUrl: "/?signUp=true" });
   
       } else {
         console.log("Error signing up:" + response.json);

@@ -9,7 +9,7 @@ import { UsersModule } from './users/users.module';
   // eslint-disable-next-line prettier/prettier
   imports: [ConfigModule.forRoot(), 
     MongooseModule.forRoot(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PW}@speed.kanud2m.mongodb.net/`,
+      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PW}@speed.kanud2m.mongodb.net/speed?retryWrites=true&w=majority`,
     ),
     UsersModule,
   ],
