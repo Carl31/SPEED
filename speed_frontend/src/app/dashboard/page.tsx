@@ -5,9 +5,9 @@ import Dash from "../../components/dash";
 import SearchBar from "../../components/searchBar";
 import { authOptions } from "../../lib/auth";
 import { getServerSession } from "next-auth/next";
-import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { signOut} from "next-auth/react";
 
 export default async function Home() {
   
@@ -29,9 +29,7 @@ export default async function Home() {
         },
       }
     );
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+    
     userData = await response.json();
     //console.log("User Data:", userData);
   } catch (error) {
