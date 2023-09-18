@@ -19,9 +19,14 @@ export class UsersController {
     return users;
   }
 
-  @Get(':username')
-  async getUser(@Param('username') username: string) {
-    return this.userService.getUser(username);
+  @Get('username/:username')
+  async getUserByUsername(@Param('username') username: string) {
+    return this.userService.getUserByUsername(username);
+  }
+
+  @Get('email/:email')
+  async getUserByEmail(@Param('email') email: string) {
+    return this.userService.getUserByEmail(email);
   }
 
   @Post('new')

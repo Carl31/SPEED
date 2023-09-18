@@ -24,8 +24,23 @@ export class UsersService {
     }));
   }
 
-  async getUser(username: string) {
-    const user = await this.findUser(username);
+  async getUserByUsername(username: string) {
+    const user = await this.findUser(username, 'username');
+    if (!user) {
+      return null;
+    }
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username,
+      password: user.password,
+    };
+  }
+
+  async getUserByEmail(username: string) {
+    const user = await this.findUser(username, 'email');
     if (!user) {
       return null;
     }
@@ -61,7 +76,7 @@ export class UsersService {
   async updateRole(username: string, newRole: string) {
     let updatedUser;
     try {
-      updatedUser = await this.findUser(username);
+      updatedUser = await this.findUser(username, 'username');
 
       if (updatedUser.role !== newRole) {
         if (
@@ -83,24 +98,29 @@ export class UsersService {
     }
   }
 
-  private async findUser(username: string) {
+  private async findUser(creds: string, type: string) {
     let user;
     try {
-      user = await this.userModel.findOne({ username: username }).exec();
+      if (type === 'username') {
+        user = await this.userModel.findOne({ username: creds }).exec();
+      } else if (type === 'email') {
+        user = await this.userModel.findOne({ email: creds }).exec();
+      }
+
       //console.log(user);
     } catch (error) {
-      throw new NotFoundException('Could not find user: ' + username);
+      throw new NotFoundException('Could not find user: ' + creds);
     }
 
     if (!user) {
-      throw new NotFoundException('Could not find user: ' + username);
+      throw new NotFoundException('Could not find user: ' + creds);
     }
 
     return user;
   }
 
   async deleteUser(username: string, password: string) {
-    const user = await this.findUser(username);
+    const user = await this.findUser(username, 'username');
     if (user.password === password) {
       await this.userModel.deleteOne({ username: username }).exec();
     } else {

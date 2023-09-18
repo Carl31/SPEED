@@ -7,37 +7,45 @@ import { authOptions } from "../../lib/auth";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default async function Home() {
-  // const { data: session } = useSession({
-  //   required: true,
-  //   onUnauthenticated() {
-  //     redirect("/signin?callbackUrl=/dashboard");
-  //   },
-  // });
+  
+ let email = undefined;
+ let userData = undefined;
 
-  //const [session, setSession] = useState(false);
   const userSession = await getServerSession(authOptions);
+  if (userSession) {
+    email = userSession?.user?.email;
+  }
 
-  //console.log(userSession)
-  // useEffect(() => {
-  //   if (userSession) {
-  //     setSession(true);
-  //   }
-  // }, []);
+  try {
+    const response = await fetch(
+      `http://localhost:4000/users/email/${email}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    userData = await response.json();
+    //console.log("User Data:", userData);
+  } catch (error) {
+    // Handle any errors that occurred during the fetch
+    console.error("Fetch error:", error);
+    return null;
+  }
 
-  //const userSession = await getServerSession(authOptions); // then I can get userSession?.user so I can call Mongo for full user data
-  //if (userSession) {
-  //console.log(userSession.user);
-  //}
 
   return (
     <>
       {userSession ? (
         <section>
-          <Dash user={undefined} />
+          <Dash userData={userData} />
           <SearchBar />
         </section>
       ) : (
