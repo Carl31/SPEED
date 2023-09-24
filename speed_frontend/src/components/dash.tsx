@@ -11,6 +11,7 @@ import AnalystSettings from "../components/settings/analyst";
 
 type Props = {
   userData: User | undefined;
+  allUsers: User[];
 };
 
 function capitaliseWord(word: string | undefined) {
@@ -18,18 +19,82 @@ function capitaliseWord(word: string | undefined) {
   return word[0].toUpperCase() + word.slice(1);
 }
 
-export default function Dash({ userData }: Props) {
+export default function Dash({ userData, allUsers }: Props) {
   //console.log(userData);
+  const [users, setUsers] = useState<User[]>(allUsers); // initially set the state to the array props from parent page, but later refreshes this in the 'toggleSettings' function
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const settingsRef = useRef(null);
-  const toggleSettings = () => {
+  // Define state to store the updated user data
+  const [updatedUsers, setUpdatedUsers] = useState<User[]>([]);
+
+  // Callback function to update user data
+  const onUpdateUsers = (updatedData: User[]) => {
+    // Update the state with the new user data
+    //console.log(updatedData);
+    setUpdatedUsers(updatedData);
+  };
+
+  async function toggleSettings() {
     setIsSettingsOpen((prev) => !prev);
+
+      try {
+        const response = await fetch(
+          `http://localhost:4000/users/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        
+        const data: User[] = await response.json();
+        allUsers = data.filter(user => user.id != userData?.id); // removes currently-signed-in user from users array.
+        setUsers(allUsers);
+        //console.log(allUsers);
+      } catch (error) {
+        // Handle any errors that occurred during the fetch
+        console.error("Fetch error:", error);
+        return null;
+      }
+    
   };
 
   const closeSettings = () => {
     setIsSettingsOpen(false);
   };
+
+  async function saveSettings() {
+    // save all updated users to database
+    const results = [];
+
+    for (const user of updatedUsers) {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/users/${user.username}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              role: user.role,
+            }),
+          }
+        );
+
+        const res = await response.json();
+        results.push(res);
+      } catch (error) {
+        console.error(`Error updating user ${user.username}:`, error);
+        results.push({ error: error instanceof Error ? error.message : "Unknown error" });
+      }
+    }
+    //console.log(results);
+
+    setIsSettingsOpen(false);
+  }
 
   return (
     <section id="dash" className="w-full grid grid-cols-3">
@@ -57,19 +122,27 @@ export default function Dash({ userData }: Props) {
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="w-1/2 bg-white p-4 rounded shadow-lg flex flex-col justify-between">
             <h2 className="text-2xl font-semibold underline mb-4 text-black flex items-center justify-center">
-            {capitaliseWord(userData?.role)} Settings
+              {capitaliseWord(userData?.role)} Settings
             </h2>
 
             <div className="flex-grow">
-              {userData?.role === "user" && <UserSettings user = {userData} />}
-              {userData?.role === "administrator" && <AdministratorSettings user = {userData}/>}
-              {userData?.role === "analyst" && <AnalystSettings user = {userData}/>}
+              {userData?.role === "user" && <UserSettings user={userData} />}
+              {userData?.role === "administrator" && (
+                <AdministratorSettings
+                  user={userData}
+                  onUpdateUsers={onUpdateUsers}
+                  allUsers={users}
+                />
+              )}
+              {userData?.role === "analyst" && (
+                <AnalystSettings user={userData} />
+              )}
             </div>
 
             <div className="grid grid-cols-3 mt-14 bg-slate-700 py-3 rounded-2xl">
               <button
                 className="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex-col mx-8 flex items-center justify-center"
-                onClick={closeSettings}
+                onClick={saveSettings}
               >
                 Save
               </button>
@@ -81,7 +154,7 @@ export default function Dash({ userData }: Props) {
               </button>
               <button
                 className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex-col mx-8 flex items-center justify-center"
-                onClick={() =>signOut()}
+                onClick={() => signOut()}
               >
                 Sign Out
               </button>
