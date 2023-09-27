@@ -2,9 +2,11 @@
 
 
 import { FormEvent, useState } from "react";
+import { signIn } from "next-auth/react";
 
 export default function SignUpForm() {
   const [loading, setLoading] = useState(false);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -20,32 +22,53 @@ export default function SignUpForm() {
       password: formData.get("password"),
     };
 
-    console.log("Creds:" + JSON.stringify(credentials));
+    //console.log("Creds:" + JSON.stringify(credentials));
 
     // send data to back-end
-    const response = await fetch("/api/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    try {
+      const response = await fetch("http://localhost:4000/users/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+    
+      if (!response.ok) {
+        // Handle non-successful response (e.g., HTTP error status)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Response data:", data);
 
-    if (response.ok) {
-      console.log("Sign up successful");
-      setLoading(false);
+      if (response.ok) {
+        console.log("Sign up successful");
+        setLoading(false);
+  
+        // reset form
+        formData.set("firstName", "");
+        formData.set("lastName", "");
+        formData.set("email", "");
+        formData.set("username", "");
+        formData.set("password", "");
 
-      // reset form
-      formData.set("firstName", "");
-      formData.set("lastName", "");
-      formData.set("email", "");
-      formData.set("username", "");
-      formData.set("password", "");
+        // create user in db
 
-    } else {
-      console.log("Error signing up:" + response.json);
-      setLoading(false);
-    }
+        // redirect to login page
+        signIn(undefined, { callbackUrl: "/?signUp=true" });
+  
+      } else {
+        console.log("Error signing up:" + response.json);
+        setLoading(false);
+      }
+    
+    } catch (error) {
+      // Handle any errors that occurred during the fetch
+      console.error("Fetch error:", error);
+    }    
+
+    
   }
 
   return (

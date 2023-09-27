@@ -151,7 +151,7 @@ Project Link: [https://github.com/Carl31/SPEED](https://github.com/Carl31/SPEED)
 Helpful resources:
 
 * [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* [Hero Icons](https://heroicons.com/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
