@@ -14,24 +14,30 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get()
-  getAllUsers() {
-    return JSON.stringify(this.userService.getUsers());
+  async getAllUsers() {
+    const users = await this.userService.getUsers();
+    return users;
   }
 
-  @Get(':username')
-  getUser(@Param('username') username: string) {
-    return JSON.stringify(this.userService.getUser(username));
+  @Get('username/:username')
+  async getUserByUsername(@Param('username') username: string) {
+    return this.userService.getUserByUsername(username);
+  }
+
+  @Get('email/:email')
+  async getUserByEmail(@Param('email') email: string) {
+    return this.userService.getUserByEmail(email);
   }
 
   @Post('new')
-  addUser(
+  async addUser(
     @Body('firstName') userFirstName: string, // body retreives variables from request object and assigns it to UserVariables
     @Body('lastName') userLastName: string,
     @Body('email') userEmail: string,
     @Body('username') userUsername: string,
     @Body('password') userPassword: string,
   ) {
-    const insertedUser = this.userService.insertUser(
+    const insertedUser = await this.userService.insertUser(
       userFirstName,
       userLastName,
       userEmail,
@@ -44,20 +50,20 @@ export class UsersController {
   }
 
   @Patch(':username')
-  updateUserRole(
+  async updateUserRole(
     @Param('username') username: string,
     @Body('role') userRole: string,
   ) {
-    this.userService.updateRole(username, userRole);
-    return `${username} has role of ${userRole}.`;
+    await this.userService.updateRole(username, userRole);
+    return `{"success":"${username} has role of ${userRole}."}`;
   }
 
   @Delete(':username')
-  deleteUser(
+  async deleteUser(
     @Param('username') username: string,
     @Body('password') password: string,
   ) {
-    this.userService.deleteUser(username, password);
-    return `${username} has been deleted.`;
+    await this.userService.deleteUser(username, password);
+    return `{"success":"${username} has been deleted."}`;
   }
 }
