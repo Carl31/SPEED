@@ -29,4 +29,4 @@ jobs:
         cache: 'npm'
         cache-dependency-path: "./speed_backend/package-lock.json"
     - run: npm i --prefix ./speed_backend
-    - run: npm test
+    - run: npm test --prefix ./speed_backend
