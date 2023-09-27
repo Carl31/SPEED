@@ -19,9 +19,14 @@ export class UsersController {
     return users;
   }
 
-  @Get(':username')
-  async getUser(@Param('username') username: string) {
-    return this.userService.getUser(username);
+  @Get('username/:username')
+  async getUserByUsername(@Param('username') username: string) {
+    return this.userService.getUserByUsername(username);
+  }
+
+  @Get('email/:email')
+  async getUserByEmail(@Param('email') email: string) {
+    return this.userService.getUserByEmail(email);
   }
 
   @Post('new')
@@ -50,7 +55,7 @@ export class UsersController {
     @Body('role') userRole: string,
   ) {
     await this.userService.updateRole(username, userRole);
-    return `${username} has role of ${userRole}.`;
+    return `{"success":"${username} has role of ${userRole}."}`;
   }
 
   @Delete(':username')
@@ -59,6 +64,6 @@ export class UsersController {
     @Body('password') password: string,
   ) {
     await this.userService.deleteUser(username, password);
-    return `${username} has been deleted.`;
+    return `{"success":"${username} has been deleted."}`;
   }
 }

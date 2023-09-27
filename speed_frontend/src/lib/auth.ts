@@ -105,6 +105,7 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
           id: token.id,
           randomKey: token.randomKey,
+          username: token.username,
         },
       };
     },
@@ -115,6 +116,7 @@ export const authOptions: NextAuthOptions = {
           ...token,
           id: u.id,
           randomKey: u.randomKey,
+          username: u.username,
         };
       }
       return token;
