@@ -28,5 +28,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: "./speed_backend/package-lock.json"
-    - run: npm i
+    - run: npm i --prefix ./speed_backend
     - run: npm test
