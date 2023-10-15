@@ -75,18 +75,6 @@ export default async function Home() {
           <Dash userData={userData} allUsers={users} />
           <SearchBar />
         </section>
-      ) : (
-        <Link legacyBehavior href="/login" passHref>
-          <section className="flex flex-col items-center justify-center">
-            <h3>
-              <p>Please log in first.</p>
-            </h3>
-            <button className="my-4 font-mono bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32">
-              <a>Click here to log in.</a>
-            </button>
-          </section>
-        </Link>
-      )}
     </>
   );
 }
