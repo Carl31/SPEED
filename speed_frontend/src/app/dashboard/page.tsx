@@ -71,7 +71,6 @@ export default async function Home() {
 
   return (
     <>
-      {userSession ? (
         <section>
           <Dash userData={userData} allUsers={users} />
           <SearchBar />

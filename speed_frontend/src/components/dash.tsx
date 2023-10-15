@@ -1,13 +1,16 @@
 "use client";
 
 import { UserSVG, MailSVG } from "../components/svgs";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, signIn, useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
 import { User } from "../components/userInterface";
+
 
 import UserSettings from "../components/settings/user";
 import AdministratorSettings from "../components/settings/admin";
 import AnalystSettings from "../components/settings/analyst";
+import NewArticle from './articles/new'; 
+import Articles from './articles/index'; 
 
 type Props = {
   userData: User | undefined;
@@ -20,6 +23,8 @@ function capitaliseWord(word: string | undefined) {
 }
 
 export default function Dash({ userData, allUsers }: Props) {
+
+  const { data: session } = useSession(); // Get session information using useSession hook
   //console.log(userData);
   const [users, setUsers] = useState<User[]>(allUsers); // initially set the state to the array props from parent page, but later refreshes this in the 'toggleSettings' function
 
@@ -60,6 +65,10 @@ export default function Dash({ userData, allUsers }: Props) {
       }
     
   };
+
+  function toggleViewArticles() {
+
+  }
 
   const closeSettings = () => {
     setIsSettingsOpen(false);
@@ -105,9 +114,25 @@ export default function Dash({ userData, allUsers }: Props) {
         <button className="m-5">
           <MailSVG />
         </button>
+
+        {/*Button that allows user to view articles saved in the articles table - redirects them to the articles page*/}
+        <div className="flex justify-start">
+          <button className="m-5 text-white">
+            <h1>View Articles</h1>
+              {/* Call article class component */}
+          </button>
+        </div>
+
+        {/*Button that allows user to submit a new article - redirects them to the new articles page*/}
+        <div className="flex justify-start">
+          <button className="m-5 text-white">
+            <h1>Submit New Article</h1>
+              {/* Call new article class component */}
+          </button>
+        </div>
       </div>
 
-      <p className="inline-flex items-center justify-center font-bold text-2xl underline">
+      <p className="inline-flex items-center justify-center text-white font-bold text-2xl underline">
         SPEED Dashboard
       </p>
 
@@ -154,9 +179,17 @@ export default function Dash({ userData, allUsers }: Props) {
               </button>
               <button
                 className="bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded flex-col mx-8 flex items-center justify-center"
-                onClick={() => signOut()}
+                onClick={() => {
+
+                  // Created session so that user can sign in if need, then once signed in, they can sign out 
+                  if (session) {
+                    signOut(); 
+                  } else {
+                    signIn(); 
+                  }
+                }}
               >
-                Sign Out
+                {session ? "Sign Out" : "Sign In"}
               </button>
             </div>
           </div>
