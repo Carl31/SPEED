@@ -1,16 +1,15 @@
 "use client";
 
-import { UserSVG, MailSVG } from "../components/svgs";
+import { UserSVG, MailSVG } from "./svgs";
 import { signOut, signIn, useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
-import { User } from "../components/userInterface";
+import { User } from "./userInterface";
 
 
-import UserSettings from "../components/settings/user";
-import AdministratorSettings from "../components/settings/admin";
-import AnalystSettings from "../components/settings/analyst";
-import NewArticle from './articles/new'; 
-import Articles from './articles/index'; 
+import UserSettings from "./settings/user";
+import AdministratorSettings from "./settings/admin";
+import AnalystSettings from "./settings/analyst";
+import Link from 'next/link';
 
 type Props = {
   userData: User | undefined;
@@ -66,10 +65,7 @@ export default function Dash({ userData, allUsers }: Props) {
     
   };
 
-  function toggleViewArticles() {
-
-  }
-
+   
   const closeSettings = () => {
     setIsSettingsOpen(false);
   };
@@ -105,6 +101,7 @@ export default function Dash({ userData, allUsers }: Props) {
     setIsSettingsOpen(false);
   }
 
+
   return (
     <section id="dash" className="w-full grid grid-cols-3">
       {isSettingsOpen && (
@@ -115,23 +112,18 @@ export default function Dash({ userData, allUsers }: Props) {
           <MailSVG />
         </button>
 
-        {/*Button that allows user to view articles saved in the articles table - redirects them to the articles page*/}
-        <div className="flex justify-start">
+        <Link href="/articles">
           <button className="m-5 text-white">
             <h1>View Articles</h1>
-              {/* Call article class component */}
           </button>
-        </div>
-
-        {/*Button that allows user to submit a new article - redirects them to the new articles page*/}
-        <div className="flex justify-start">
+        </Link>
+    
+        <Link href="/new-article">
           <button className="m-5 text-white">
-            <h1>Submit New Article</h1>
-              {/* Call new article class component */}
+            <h1>Create New Article</h1>
           </button>
-        </div>
-      </div>
-
+        </Link>
+    </div>
       <p className="inline-flex items-center justify-center text-white font-bold text-2xl underline">
         SPEED Dashboard
       </p>
