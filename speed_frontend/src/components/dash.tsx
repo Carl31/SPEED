@@ -110,6 +110,10 @@ export default function Dash({ userData, allUsers }: Props) {
     router.push('/viewAll');
   };
 
+  const handleSearchClick = () => {
+    router.push("/search");
+  };
+
   return (
     <section id="dash" className="w-full grid grid-cols-3">
       {isSettingsOpen && (
@@ -125,7 +129,6 @@ export default function Dash({ userData, allUsers }: Props) {
         <div className="">
           <button onClick={handleViewAllClick} className="mt-5 text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded flex-col flex items-center justify-center w-36 h-14">
             <h1>View Articles</h1>
-              {/* Call article class component */}
           </button>
         </div>
 
@@ -133,7 +136,6 @@ export default function Dash({ userData, allUsers }: Props) {
         <div className="">
           <button onClick={handleSubmitClick} className="mt-5 text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded flex-col mx-6 flex items-center justify-center w-44 h-14">
             <h1>Submit Article</h1>
-              {/* Call new article class component */}
           </button>
         </div>
       </div>
@@ -143,6 +145,13 @@ export default function Dash({ userData, allUsers }: Props) {
       </p>
 
       <div className="flex justify-end">
+        {/*Button that allows user to search for an article - redirects them to the search page*/}
+        <div className="">
+          <button onClick={handleSearchClick} className="mt-5 text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded flex-col mx-6 flex items-center justify-center w-30 h-14">
+            <h1>Search</h1>
+          </button>
+        </div>
+
         <button className="m-5" onClick={toggleSettings}>
           <UserSVG />
           <p>{userData?.firstName}</p>

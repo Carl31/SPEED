@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Dash from "../../components/dash";
+import SearchPage from "@/components/searchPage";
 import UserlessDash from "@/components/userlessDash";
-import ViewAllPage from "../../components/viewAllPage";
+import SubmitPage from "../../components/submitPage";
 import { authOptions } from "../../lib/auth";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
@@ -70,19 +71,17 @@ export default async function Home() {
     
   };
 
-  const articles = undefined;
-
-  return ( 
+  return (
     <>
       {userSession ? (
         <section>
           <Dash userData={userData} allUsers={users} />
-          <ViewAllPage />
+          <SearchPage />
         </section>
       ) : ( // doesn't requre a user to be signed in to view all articles
         <section>
           <UserlessDash />
-          <ViewAllPage />
+          <SearchPage />
         </section>
       )}
     </>
