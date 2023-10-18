@@ -9,29 +9,33 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller('users') // for localhost/users/...
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  // retrives all users
   @Get()
   async getAllUsers() {
-    const users = await this.userService.getUsers();
-    return users;
+    return this.userService.getUsers();
   }
 
+  // retrieves a specific user based on username
   @Get('username/:username')
   async getUserByUsername(@Param('username') username: string) {
     return this.userService.getUserByUsername(username);
   }
 
+  // retrieves a specific user based on email
   @Get('email/:email')
   async getUserByEmail(@Param('email') email: string) {
     return this.userService.getUserByEmail(email);
   }
 
+  // create a new user
   @Post('new')
   async addUser(
-    @Body('firstName') userFirstName: string, // body retreives variables from request object and assigns it to UserVariables
+    // body retreives variables from the request object and assigns it to UserVariables
+    @Body('firstName') userFirstName: string,
     @Body('lastName') userLastName: string,
     @Body('email') userEmail: string,
     @Body('username') userUsername: string,
@@ -49,6 +53,7 @@ export class UsersController {
     return { NewUser: insertedUser };
   }
 
+  // updated the role of a user based on username
   @Patch(':username')
   async updateUserRole(
     @Param('username') username: string,
@@ -58,6 +63,7 @@ export class UsersController {
     return `{"success":"${username} has role of ${userRole}."}`;
   }
 
+  // delete a user based on username
   @Delete(':username')
   async deleteUser(
     @Param('username') username: string,

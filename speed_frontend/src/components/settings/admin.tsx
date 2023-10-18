@@ -60,9 +60,10 @@ export default function AdministratorSettings({
     setRunEffect(true);
   }
 
+  // When administrator changes the role of a user, that users information is add/removed/updated to a temporary array of users held in state "updatedUsers"
   const handleRoleChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    userId: string
+    e: React.ChangeEvent<HTMLSelectElement>, // the HTML select event to retrieve type of role selected
+    userId: string // the userID of the user
   ) => {
     const selectedRole = e.target.value;
     if (selectedRole === "") {
