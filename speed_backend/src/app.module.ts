@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config'; // for environment variables
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { ArticlesModule } from './articles/articles.module';
+import { AnalystArticlesModule } from './analystArticles/analystArticles.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -12,6 +14,8 @@ import { UsersModule } from './users/users.module';
       `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PW}@speed.kanud2m.mongodb.net/speed?retryWrites=true&w=majority`,
     ),
     UsersModule,
+    ArticlesModule,
+    AnalystArticlesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

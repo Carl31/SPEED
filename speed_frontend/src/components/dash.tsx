@@ -9,6 +9,8 @@ import UserSettings from "../components/settings/user";
 import AdministratorSettings from "../components/settings/admin";
 import AnalystSettings from "../components/settings/analyst";
 
+import { useRouter } from "next/navigation";
+
 type Props = {
   userData: User | undefined;
   allUsers: User[];
@@ -20,6 +22,8 @@ function capitaliseWord(word: string | undefined) {
 }
 
 export default function Dash({ userData, allUsers }: Props) {
+  const router = useRouter();
+
   //console.log(userData);
   const [users, setUsers] = useState<User[]>(allUsers); // initially set the state to the array props from parent page, but later refreshes this in the 'toggleSettings' function
 
@@ -38,28 +42,24 @@ export default function Dash({ userData, allUsers }: Props) {
   async function toggleSettings() {
     setIsSettingsOpen((prev) => !prev);
 
-      try {
-        const response = await fetch(
-          `http://localhost:4000/users/`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        
-        const data: User[] = await response.json();
-        allUsers = data.filter(user => user.id != userData?.id); // removes currently-signed-in user from users array.
-        setUsers(allUsers);
-        //console.log(allUsers);
-      } catch (error) {
-        // Handle any errors that occurred during the fetch
-        console.error("Fetch error:", error);
-        return null;
-      }
-    
-  };
+    try {
+      const response = await fetch(`http://localhost:4000/users/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data: User[] = await response.json();
+      allUsers = data.filter((user) => user.id != userData?.id); // removes currently-signed-in user from users array.
+      setUsers(allUsers);
+      //console.log(allUsers);
+    } catch (error) {
+      // Handle any errors that occurred during the fetch
+      console.error("Fetch error:", error);
+      return null;
+    }
+  }
 
   const closeSettings = () => {
     setIsSettingsOpen(false);
@@ -88,7 +88,9 @@ export default function Dash({ userData, allUsers }: Props) {
         results.push(res);
       } catch (error) {
         console.error(`Error updating user ${user.username}:`, error);
-        results.push({ error: error instanceof Error ? error.message : "Unknown error" });
+        results.push({
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
       }
     }
     //console.log(results);
@@ -96,22 +98,72 @@ export default function Dash({ userData, allUsers }: Props) {
     setIsSettingsOpen(false);
   }
 
+  const handleSubmitClick = () => {
+    router.push(`/submit?username=${userData?.username}`);
+  };
+
+  const handleViewAllClick = () => {
+    router.push("/viewAll");
+  };
+
+  const handleSearchClick = () => {
+    router.push("/search");
+  };
+
+  const handleMailClick = () => {
+    router.push("/mail");
+  };
+
+  const handleDashClick = () => {
+    router.push("/dashboard");
+  };
+
   return (
     <section id="dash" className="w-full grid grid-cols-3">
       {isSettingsOpen && (
         <div className="backdrop-blur absolute inset-0 bg-blue-800 opacity-70" />
       )}
       <div className="flex justify-start">
-        <button className="m-5">
+        <button className="m-5" onClick={handleMailClick}>
           <MailSVG />
         </button>
+
+        {/*Button that allows user to view articles saved in the articles table - redirects them to the articles page*/}
+        <div className="">
+          <button
+            onClick={handleViewAllClick}
+            className="mt-5 text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded flex-col flex items-center justify-center w-36 h-14"
+          >
+            <h1>View Articles</h1>
+          </button>
+        </div>
+
+        {/*Button that allows user to submit a new article - redirects them to the new articles page*/}
+        <div className="">
+          <button
+            onClick={handleSubmitClick}
+            className="mt-5 text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded flex-col mx-6 flex items-center justify-center w-44 h-14"
+          >
+            <h1>Submit Article</h1>
+          </button>
+        </div>
       </div>
 
       <p className="inline-flex items-center justify-center font-bold text-2xl underline">
-        SPEED Dashboard
+        <button onClick={handleDashClick}>SPEED Dashboard</button>
       </p>
 
       <div className="flex justify-end">
+        {/*Button that allows user to search for an article - redirects them to the search page*/}
+        <div className="">
+          <button
+            onClick={handleSearchClick}
+            className="mt-5 text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded flex-col mx-6 flex items-center justify-center w-30 h-14"
+          >
+            <h1>Search</h1>
+          </button>
+        </div>
+
         <button className="m-5" onClick={toggleSettings}>
           <UserSVG />
           <p>{userData?.firstName}</p>
