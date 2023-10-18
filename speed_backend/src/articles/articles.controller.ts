@@ -26,13 +26,23 @@ export class ArticlesController {
   }
 
   @Post()
-  async createArticle(
-    @Body() articleData: any, // Define a DTO (Data Transfer Object) for article creation
+  async submitArticle(
+    @Body('title') articleTitle: string,
+    @Body('authors') articleAuthors: string,
+    @Body('source') articleSource: string,
+    @Body('year') articleYear: string,
+    @Body('doi') articleDoi: string,
+    @Body('summary') articleSummary: string,
   ) {
-    const createdArticle = await this.articlesService.createArticle(
-      articleData,
+    const submittedArticle = await this.articlesService.submitArticle(
+      articleTitle,
+      articleAuthors,
+      articleSource,
+      articleYear,
+      articleDoi,
+      articleSummary,
     );
-    return createdArticle;
+    return submittedArticle;
   }
 
   @Patch(':id')

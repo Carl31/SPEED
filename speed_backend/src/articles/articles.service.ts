@@ -19,12 +19,6 @@ export class ArticlesService {
     return article;
   }
 
-  async createArticle(articleData: any) {
-    const newArticle = new this.articleModel(articleData);
-    const createdArticle = await newArticle.save();
-    return createdArticle;
-  }
-
   async updateArticle(id: string, updateData: any) {
     const updatedArticle = await this.findArticle(id);
     Object.assign(updatedArticle, updateData);
@@ -35,6 +29,26 @@ export class ArticlesService {
   async deleteArticle(id: string) {
     const article = await this.findArticle(id);
     await article.remove();
+  }
+
+  async submitArticle(
+    articleTitle: string,
+    articleAuthors: string,
+    articleSource: string,
+    articleYear: string,
+    articleDoi: string,
+    articleSummary: string,
+  ) {
+    const newArticle = new this.articleModel({
+      articleTitle: articleTitle,
+      articleAuthors: articleAuthors,
+      articleSource: articleSource,
+      articleYear: articleYear,
+      articleDoi: articleDoi,
+      articleSummary: articleSummary,
+    });
+    const submittedArticle = await newArticle.save();
+    return submittedArticle;
   }
 
   private async findArticle(id: string) {
