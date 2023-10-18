@@ -11,12 +11,14 @@ import Link from "next/link";
 import { signOut} from "next-auth/react";
 import { User } from "../../components/userInterface";
 import { useEffect, useState } from "react";
+import { Article } from "../../components/articlesInterface";
 
 export default async function Home() {
   
  let email: string | null| undefined = undefined;
  let userData: User | undefined = undefined;
  let users: User[] = [];
+ let articles: Article[] = [];
 
   const userSession = await getServerSession(authOptions);
   if (userSession) {
@@ -63,6 +65,24 @@ export default async function Home() {
     return null;
   }
 
+  try {
+    const response = await fetch(
+      `http://localhost:4000/articles`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    
+    articles = await response.json();
+  } catch (error) {
+    // Handle any errors that occurred during the fetch
+    console.error("Fetch error:", error);
+    return null;
+  }
+
   // Callback function to update user data
   const onUpdateUsers = (updatedUsers: User[]) => {
     // Update the state with the new user data
@@ -70,19 +90,17 @@ export default async function Home() {
     
   };
 
-  const articles = undefined;
-
   return ( 
     <>
       {userSession ? (
         <section>
           <Dash userData={userData} allUsers={users} />
-          <ViewAllPage />
+          <ViewAllPage articles={articles} />
         </section>
       ) : ( // doesn't requre a user to be signed in to view all articles
         <section>
           <UserlessDash />
-          <ViewAllPage />
+          <ViewAllPage articles={articles}/>
         </section>
       )}
     </>

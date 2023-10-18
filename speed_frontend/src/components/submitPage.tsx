@@ -8,27 +8,74 @@ import articleStyles from "../app/Form.module.scss";
 
 const SubmitPage = () => {
   const [title, setTitle] = useState("");
-  const [authors, setAuthors] = useState<string[]>([]);
+  const [authors, setAuthors] = useState<string[]>([""]);
   const [source, setSource] = useState("");
   const [pubYear, setPubYear] = useState<number>(0);
   const [doi, setDoi] = useState("");
   const [summary, setSummary] = useState("");
-  const [linkedDiscussion, setLinkedDiscussion] = useState("");
+  const [practice, setPractice] = useState("");
+  const [claim, setClaim] = useState("");
+  const [volume, setVolume] = useState("");
+  const [pages, setPages] = useState<number>(0);
 
   const submitNewArticle = async (event: FormEvent<HTMLFormElement>) => {
+    
     event.preventDefault();
 
-    console.log(
-      JSON.stringify({
-        title,
-        authors,
-        source,
-        publication_year: pubYear,
-        doi,
-        summary,
-        linked_discussion: linkedDiscussion,
-      })
-    );
+    // Check if there's at least one author
+  if (authors.length === 0) {
+    alert("Please add at least one author.");
+    return;
+  }
+
+    // Create an object with all the article data
+    const newArticle = {
+      articleTitle: title,
+      articleAuthors: authors,
+      articleSource: source,
+      articleYear: pubYear,
+      articleDoi: doi,
+      articleSummary: summary,
+      articlePractice: practice, 
+      articleClaim: claim, 
+      articleVolume: volume, 
+      articlePages: pages, 
+    };
+
+    // Send the new article data to the backend
+    try {
+      const response = await fetch("http://localhost:4000/articles/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newArticle),
+      });
+
+      if (!response.ok) {
+        // Handle non-successful response (e.g., HTTP error status)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      // Handle success or other actions as needed
+      const data = await response.json();
+      console.log("Response data:", data);
+
+      // Reset the form fields or perform other actions
+      setTitle("");
+      setAuthors([]);
+      setSource("");
+      setPubYear(0);
+      setDoi("");
+      setSummary("");
+      setPractice("");
+      setClaim("");
+      setVolume("");
+      setPages(0);
+    } catch (error) {
+      // Handle any errors that occurred during the fetch
+      console.error("Fetch error:", error);
+    }
   };
 
   /**
@@ -60,9 +107,11 @@ const SubmitPage = () => {
   return (
     <div className=" place-items-center">
       <div className="max-w-screen-lg mx-auto">
-        
-        <form className={`${articleStyles.form} max-w-screen-lg mx-auto`} onSubmit={submitNewArticle}>
-        <h1 className="mb-12 mt-12 font-bold" >Submit new article</h1>
+        <form
+          className={`${articleStyles.form} max-w-screen-lg mx-auto`}
+          onSubmit={submitNewArticle}
+        >
+          <h1 className="mb-12 mt-12 font-bold">Submit new article</h1>
           <label htmlFor="title">Title:</label>
           <input
             className={`${articleStyles.formItem} text-black`}
@@ -73,6 +122,7 @@ const SubmitPage = () => {
             onChange={(event) => {
               setTitle(event.target.value);
             }}
+            required
           />
 
           <label htmlFor="author">Authors:</label>
@@ -118,6 +168,7 @@ const SubmitPage = () => {
             onChange={(event) => {
               setSource(event.target.value);
             }}
+            required
           />
 
           <label htmlFor="pubYear">Publication Year:</label>
@@ -135,6 +186,7 @@ const SubmitPage = () => {
                 setPubYear(parseInt(val));
               }
             }}
+            required
           />
 
           <label htmlFor="doi">DOI:</label>
@@ -147,6 +199,7 @@ const SubmitPage = () => {
             onChange={(event) => {
               setDoi(event.target.value);
             }}
+            required
           />
 
           <label htmlFor="summary">Summary:</label>
@@ -155,9 +208,67 @@ const SubmitPage = () => {
             name="summary"
             value={summary}
             onChange={(event) => setSummary(event.target.value)}
+            required
           />
 
-          <button className={`${articleStyles.formItem} text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded items-center justify-center`} type="submit">
+          <label htmlFor="practice">Practice:</label>
+          <input
+            className={`${articleStyles.formItem} text-black`}
+            type="text"
+            name="practice"
+            id="practice"
+            value={practice}
+            onChange={(event) => {
+              setPractice(event.target.value);
+            }}
+            required
+          />
+          <label htmlFor="claim">Claim:</label>
+          <input
+            className={`${articleStyles.formItem} text-black`}
+            type="text"
+            name="claim"
+            id="claim"
+            value={claim}
+            onChange={(event) => {
+              setClaim(event.target.value);
+            }}
+            required
+          />
+          <label htmlFor="volume">Volume:</label>
+          <input
+            className={`${articleStyles.formItem} text-black`}
+            type="text"
+            name="volume"
+            id="volume"
+            value={volume}
+            onChange={(event) => {
+              setVolume(event.target.value);
+            }}
+            required
+          />
+          <label htmlFor="pages">Pages:</label>
+          <input
+            className={`${articleStyles.formItem} text-black`}
+            type="number"
+            name="pages"
+            id="pages"
+            value={pages}
+            onChange={(event) => {
+              const val = event.target.value;
+              if (val === "") {
+                setPages(0);
+              } else {
+                setPages(parseInt(val));
+              }
+            }}
+            required
+          />
+
+          <button
+            className={`${articleStyles.formItem} text-white bg-blue-400 hover:bg-blue-600 font-bold py-2 px-4 rounded items-center justify-center`}
+            type="submit"
+          >
             Submit
           </button>
         </form>

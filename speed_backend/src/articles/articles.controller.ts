@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Patch,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 
 @Controller('articles')
@@ -19,20 +11,96 @@ export class ArticlesController {
     return articles;
   }
 
-  @Get(':id')
-  async getArticleById(@Param('id') id: string) {
-    const article = await this.articlesService.getArticleById(id);
-    return article;
+  // inddividual param gets...
+  @Get('/title/:title')
+  async getArticleById(@Param('title') title: string) {
+    const articles = await this.articlesService.getArticlesByTitle(title);
+    return articles;
   }
 
-  @Post()
+  @Get('authors/:authors')
+  async getArticleByAuthors(@Param('authors') authors: string) {
+    const articles = await this.articlesService.getArticlesByAuthors(authors);
+    return articles;
+  }
+
+  @Get('source/:source')
+  async getArticleBySource(@Param('source') source: string) {
+    const articles = await this.articlesService.getArticlesBySource(source);
+    return articles;
+  }
+
+  @Get('year/:year')
+  async getArticleByYear(@Param('year') year: string) {
+    const articles = await this.articlesService.getArticlesByYear(year);
+    return articles;
+  }
+
+  @Get('doi/:doi')
+  async getArticleByDoi(@Param('doi') doi: string) {
+    const articles = await this.articlesService.getArticlesByDoi(doi);
+    return articles;
+  }
+
+  @Get('practice/:practice')
+  async getArticleByPractice(@Param('practice') practice: string) {
+    const articles = await this.articlesService.getArticlesByPractice(practice);
+    return articles;
+  }
+
+  @Get('volume/:volume')
+  async getArticleByVolume(@Param('volume') volume: string) {
+    const articles = await this.articlesService.getArticlesByVolume(volume);
+    return articles;
+  }
+
+  @Get('pages/:pages')
+  async getArticleByPages(@Param('pages') pages: string) {
+    const articles = await this.articlesService.getArticlesByPages(pages);
+    return articles;
+  }
+
+  @Get('analystAgrees/:analystAgrees')
+  async getArticleByAnalystAgrees(
+    @Param('analystAgrees') analystAgrees: string,
+  ) {
+    const articles = await this.articlesService.getArticlesByAnalystAgrees(
+      analystAgrees,
+    );
+    return articles;
+  }
+
+  // all param gets...
+  @Post('search')
+  async searchForArticle(
+    @Body('articleTitle') articleTitle: string,
+    @Body('articleAuthor') articleAuthor: string,
+    @Body('articleSource') articleSource: string,
+    @Body('articleDoi') articleDoi: string,
+    @Body('articlePractice') articlePractice: string,
+  ) {
+    const results = await this.articlesService.searchForArticle(
+      articleTitle,
+      articleAuthor,
+      articleSource,
+      articleDoi,
+      articlePractice,
+    );
+    return results;
+  }
+
+  @Post('new')
   async submitArticle(
-    @Body('title') articleTitle: string,
-    @Body('authors') articleAuthors: string,
-    @Body('source') articleSource: string,
-    @Body('year') articleYear: string,
-    @Body('doi') articleDoi: string,
-    @Body('summary') articleSummary: string,
+    @Body('articleTitle') articleTitle: string,
+    @Body('articleAuthors') articleAuthors: string[],
+    @Body('articleSource') articleSource: string,
+    @Body('articleYear') articleYear: string,
+    @Body('articleDoi') articleDoi: string,
+    @Body('articleSummary') articleSummary: string,
+    @Body('articlePractice') articlePractice: string,
+    @Body('articleClaim') articleClaim: string,
+    @Body('articleVolume') articleVolume: string,
+    @Body('articlePages') articlePages: string,
   ) {
     const submittedArticle = await this.articlesService.submitArticle(
       articleTitle,
@@ -41,22 +109,11 @@ export class ArticlesController {
       articleYear,
       articleDoi,
       articleSummary,
+      articlePractice,
+      articleClaim,
+      articleVolume,
+      articlePages,
     );
     return submittedArticle;
-  }
-
-  @Patch(':id')
-  async updateArticle(@Param('id') id: string, @Body() updateData: any) {
-    const updatedArticle = await this.articlesService.updateArticle(
-      id,
-      updateData,
-    );
-    return updatedArticle;
-  }
-
-  @Delete(':id')
-  async deleteArticle(@Param('id') id: string) {
-    await this.articlesService.deleteArticle(id);
-    return { message: 'Article deleted successfully' };
   }
 }

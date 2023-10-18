@@ -7,6 +7,11 @@ export const ArticleSchema = new mongoose.Schema({
   articleYear: { type: String, required: true },
   articleDoi: { type: String, required: true },
   articleSummary: { type: String, required: true },
+  articlePractice: { type: String, required: true },
+  articleClaim: { type: String, required: true },
+  articleVolume: { type: String, required: true },
+  articlePages: { type: String, required: true },
+  articleAnalystAgrees: { type: String, required: true },
 });
 
 export interface Article extends mongoose.Document {
@@ -16,4 +21,9 @@ export interface Article extends mongoose.Document {
   articleYear: string;
   articleDoi: string;
   articleSummary: string;
+  articlePractice: string;
+  articleClaim: string;
+  articleVolume: string;
+  articlePages: string;
+  articleAnalystAgrees: string;
 }

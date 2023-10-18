@@ -1,10 +1,14 @@
 export interface Article {
-    id: string;
-    title: string;
-    authors: string;
-    source: string;
-    pubyear: string;
-    doi: string;
-    claim: string;
-    evidence: string;
+    //id: string;
+    articleTitle: string;
+    articleAuthors: string;
+    articleSource: string;
+    articleYear: string;
+    articleDoi: string;
+    articleSummary: string;
+    articlePractice: string;
+    articleClaim: string;
+    articleVolume: string;
+    articlePages: string;
+    articleAnalystAgrees: string;
 }
