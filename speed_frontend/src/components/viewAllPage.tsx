@@ -20,7 +20,7 @@ const ViewAllPage: React.FC<ArticlesProps> = ({ articles }) => {
     { key: "articleTitle", label: "Title" },
     { key: "articlePractice", label: "Practice" },
     { key: "articleClaim", label: "Claim" },
-    { key: "articleAnalystAgrees", label: "Analyst Agrees" },
+    { key: "articleAnalystAgrees", label: "Analyst Decision" },
   ];
 
   const handleRowClick = (article: Article) => {
@@ -63,9 +63,9 @@ function splitAuthors(authors: string): string {
           <div className="modal-content ml-36 mr-36">
             <div className="bg-blue-900 p-4 justify-center items-center  rounded-lg w-full grid grid-cols-7">
               <div className="justify-start col-span-3">
-                <h2 className="font-bold pb-4">
+                <h1 className="font-bold pb-4">
                   Title: {selectedArticle.articleTitle}
-                </h2>
+                </h1>
                 <p>Practice: {selectedArticle.articlePractice}</p>
                 <p>Claim: {selectedArticle.articleClaim}</p>
                 <p className="mb-6">

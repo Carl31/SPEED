@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 
 @Controller('articles')
@@ -68,6 +68,15 @@ export class ArticlesController {
       analystAgrees,
     );
     return articles;
+  }
+
+  @Patch(':articleDoi')
+  async updateArticleStatus(
+    @Param('articleDoi') articleDoi: string,
+    @Body('status') articleStatus: string,
+  ) {
+    await this.articlesService.updateArticleStatus(articleDoi, articleStatus);
+    return `{"success":"${articleDoi} has role of ${articleStatus}."}`;
   }
 
   // all param gets...

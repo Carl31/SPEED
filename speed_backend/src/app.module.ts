@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ArticlesModule } from './articles/articles.module';
+import { AnalystArticlesModule } from './analystArticles/analystArticles.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -14,6 +15,7 @@ import { ArticlesModule } from './articles/articles.module';
     ),
     UsersModule,
     ArticlesModule,
+    AnalystArticlesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

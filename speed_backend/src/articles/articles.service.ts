@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article } from './article.model';
+import { InvalidInputException } from 'src/utils/InvalidInputError';
 
 @Injectable()
 export class ArticlesService {
@@ -9,49 +10,55 @@ export class ArticlesService {
     @InjectModel('Article') private readonly articleModel: Model<Article>,
   ) {}
 
+  private async filterByApproved(articles: Article[]) {
+    return articles.filter(
+      (article) => article.articleAnalystAgrees === 'approved',
+    );
+  }
+
   async getAllArticles() {
     const articles = await this.articleModel.find().exec();
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByTitle(title: string) {
-    const article = await this.findArticles('articleTitle', title);
-    return article;
+    const articles = await this.findArticles('articleTitle', title);
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByAuthors(authors: string) {
     const articles = await this.findArticles('articleAuthors', authors);
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesBySource(source: string) {
     const articles = await this.findArticles('articleSource', source);
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByYear(year: string) {
     const articles = await this.findArticles('articleYear', year);
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByDoi(doi: string) {
     const articles = await this.findArticles('articleDoi', doi);
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByPractice(practice: string) {
     const articles = await this.findArticles('articlePractice', practice);
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByVolume(volume: string) {
     const articles = await this.findArticles('articleVolume', volume);
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByPages(pages: string) {
     const articles = await this.findArticles('articlePages', pages);
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async getArticlesByAnalystAgrees(analystAgrees: string) {
@@ -59,7 +66,7 @@ export class ArticlesService {
       'articleAnalystAgrees',
       analystAgrees,
     );
-    return articles;
+    return this.filterByApproved(articles);
   }
 
   async searchForArticle(
@@ -91,7 +98,12 @@ export class ArticlesService {
     // Build the query by iterating over the search filters
     for (const key in searchFilters) {
       if (searchFilters[key] && searchFilters[key] !== '') {
-        query[key] = { $regex: searchFilters[key], $options: 'i' };
+        if (key === 'articleAnalystAgrees') {
+          // Special handling for 'articleAnalystAgrees'
+          query[key] = searchFilters[key];
+        } else {
+          query[key] = { $regex: searchFilters[key], $options: 'i' };
+        }
       }
     }
 
@@ -130,10 +142,40 @@ export class ArticlesService {
       articleClaim: articleClaim,
       articleVolume: articleVolume,
       articlePages: articlePages,
-      articleAnalystAgrees: 'undecided',
+      articleAnalystAgrees: 'pending',
     });
     const submittedArticle = await newArticle.save();
     return submittedArticle;
+  }
+
+  async updateArticleStatus(articleDoi: string, newStatus: string) {
+    try {
+      const article = (await this.articleModel
+        .findOne({ articleDoi: articleDoi })
+        .exec()) as Article;
+
+      if (!article) {
+        throw new NotFoundException('Could not find article: ' + articleDoi);
+      }
+
+      if (article.articleAnalystAgrees !== newStatus) {
+        if (newStatus === 'approved' || newStatus === 'rejected') {
+          article.articleAnalystAgrees = newStatus;
+        } else {
+          throw new InvalidInputException(
+            "Status can only be 'approved' or 'rejected'.",
+          );
+        }
+
+        await article.save();
+        return article;
+      } else {
+        // Status is already the same, no update needed
+        return article;
+      }
+    } catch (error) {
+      throw new NotFoundException('Could not find article: ' + articleDoi);
+    }
   }
 
   // finds article dependant on search parameter type

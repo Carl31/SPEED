@@ -83,13 +83,6 @@ export default async function Home() {
     return null;
   }
 
-  // Callback function to update user data
-  const onUpdateUsers = (updatedUsers: User[]) => {
-    // Update the state with the new user data
-    
-    
-  };
-
   return ( 
     <>
       {userSession ? (

@@ -5,6 +5,8 @@
 
 import { FormEvent, useState } from "react";
 import articleStyles from "../app/Form.module.scss";
+import { showNotification } from './notification';
+import { useSearchParams } from 'next/navigation'
 
 const SubmitPage = () => {
   const [title, setTitle] = useState("");
@@ -17,6 +19,10 @@ const SubmitPage = () => {
   const [claim, setClaim] = useState("");
   const [volume, setVolume] = useState("");
   const [pages, setPages] = useState<number>(0);
+
+  const searchParams = useSearchParams();
+  const username = searchParams.get('username');
+  //console.log(username);
 
   const submitNewArticle = async (event: FormEvent<HTMLFormElement>) => {
     
@@ -60,6 +66,17 @@ const SubmitPage = () => {
       // Handle success or other actions as needed
       const data = await response.json();
       console.log("Response data:", data);
+      alert("Your article has been submitted! Now awaiting analyst approval.");
+
+      // add article to analyst queue
+      const analystArticle = {articleDoi: newArticle.articleDoi, articleSubmitter: username}
+      const res = await fetch("http://localhost:4000/analyst/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(analystArticle),
+      });
 
       // Reset the form fields or perform other actions
       setTitle("");
