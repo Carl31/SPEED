@@ -182,6 +182,7 @@ export default function Dash({ userData, allUsers }: Props) {
                 }}
               >
                 {session ? "Sign Out" : "Sign In"}
+                
               </button>
             </div>
           </div>

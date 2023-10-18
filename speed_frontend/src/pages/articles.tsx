@@ -20,7 +20,6 @@ type Article = {
 
 const Articles: NextPage = () => {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const normalizedData = data.articles.map((article: any) => ({
@@ -34,12 +33,7 @@ const Articles: NextPage = () => {
         evidence: article.evidence,
     }));
     setArticles(normalizedData);
-    setLoading(false);
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   const headers = [
     { key: "title", label: "Title" },
@@ -52,8 +46,8 @@ const Articles: NextPage = () => {
   ];
 
   return (
-    <div className="container">
-      <h1>Articles</h1>
+    <div className="backdrop-blur absolute inset-0 bg-blue-800 opacity-70">
+      <h1>Articles in SPEED </h1>
       <ArticleTable headers={headers} data={articles} />
     </div>
   );
