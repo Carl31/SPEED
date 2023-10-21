@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { AnalystArticle } from './analystArticles.model';
-import { InvalidInputException } from 'src/utils/InvalidInputError';
+import { InvalidInputException } from '../utils/InvalidInputError';
 
 @Injectable()
 export class AnalystArticlesService {
